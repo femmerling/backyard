@@ -1,0 +1,7 @@
+*.pyc
+*.swo
+setupy.py
+.DS_Store
+db_repository/
+backyard/
+*.db
