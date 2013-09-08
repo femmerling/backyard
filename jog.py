@@ -1,1 +1,0 @@
-#! backyard/bin/python
