@@ -101,9 +101,6 @@ def add_model(model_name, model_components):
 
     print '\n'+model_name+' tree seed planted in the greenhouse\n'
 
-    #add the CRUD controllers
-    generate_controller(model_name, model_components)
-
     if not os.path.exists(SQLALCHEMY_MIGRATE_REPO):
         print "If you're done, please run yard shove to complete the database creation"
     else:

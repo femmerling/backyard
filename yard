@@ -25,7 +25,7 @@ from config import SQLALCHEMY_MIGRATE_REPO, VALID_DATA_TYPES
 from gardener import help, db_create, db_migrate
 from gardener import db_upgrade, db_downgrade, db_version
 from gardener import install_package
-from gardener import add_controller, add_model
+from gardener import add_controller, add_model, generate_controller
 from gardener import run_tornado, run_gunicorn, run_testrun, stop_gunicorn
 
 if len(sys.argv) > 1:
@@ -55,6 +55,34 @@ if len(sys.argv) > 1:
 		if len(sys.argv) > 3:
 			# this handles controllers that are attached to models
 			if sys.argv[2].lower() == 'tree':
+				model_name = sys.argv[3].title()
+				raw_component = sys.argv[4:]
+				model_components = []
+				if raw_component:
+					for component in raw_component:
+						raw_field = component.split(':')
+						field_name = raw_field[0]
+						detail_components = raw_field[1].split('--')
+						if detail_components[0].lower() == 'string':
+							if len(detail_components) < 2:
+								detail_components.append('50')
+								insert_components = {
+												'field_name': field_name,
+												'field_property': detail_components
+											}
+						elif detail_components[0].lower() in VALID_DATA_TYPES:
+							insert_components = {
+											'field_name': field_name,
+											'field_property': detail_components
+										}
+						else:
+							print '\n' + detail_components[0].lower() + ' is not a valid data type.'
+							sys.exit()
+						model_components.append(insert_components)
+					add_model(model_name, model_components)
+					generate_controller(model_name, model_components)
+			# this handles model without controllers
+			elif sys.argv[2].lower() == 'seed':
 				model_name = sys.argv[3].title()
 				raw_component = sys.argv[4:]
 				model_components = []

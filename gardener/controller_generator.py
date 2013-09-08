@@ -6,8 +6,6 @@ from config import WHITE_SPACE
 def generate_controller(model_name, model_components):
     model_name = model_name.lower()
     db_model_name = model_name.title()
-    mod_counter = 1
-    max_mod_index = len(model_components)
     controller_path = os.path.join(BASEDIR, 'app/controllers/'+model_name+'.py')
     
     controller_file = open(controller_path,'w')
