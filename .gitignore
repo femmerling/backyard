@@ -2,6 +2,6 @@
 *.swo
 setupy.py
 .DS_Store
-db_repository/
+warehouse/
 backyard/
 *.db
