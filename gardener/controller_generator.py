@@ -17,8 +17,11 @@ def generate_controller(model_name, model_components):
     controller_file.write("from flask import redirect\n")
     controller_file.write("from flask import request\n")
     controller_file.write("from flask import abort\n")
-    controller_file.write("from flask import Response\n\n")
-    controller_file.write("from datetime import datetime\n\n")
+    controller_file.write("from flask import Response\n")
+    controller_file.write("from datetime import datetime\n")
+    controller_file.write("from helpers import new_parser\n")
+    controller_file.write("from helpers import edit_parser\n\n")
+
     controller_file.write("from app import db\n\n")
 	
     # import related models
@@ -31,9 +34,10 @@ def generate_controller(model_name, model_components):
     controller_file.write("@"+model_name+"_view.route('/" + model_name + "',methods=['GET','POST'],defaults={'id':None})\n")
     controller_file.write("@"+model_name+"_view.route('/" + model_name + "/<id>',methods=['GET','PUT','DELETE'])\n")
     controller_file.write("def " + model_name + "_controller(id):\n")
-    for component in model_components:
-        controller_file.write(WHITE_SPACE + component['field_name'].lower() + " = request.values.get('" + component['field_name'].lower() + "')\n")
-    controller_file.write("\n"+ WHITE_SPACE +"if id:\n")
+    controller_file.write(WHITE_SPACE + "if request.data:\n")
+    controller_file.write(WHITE_SPACE + WHITE_SPACE + model_name + " = " + db_model_name + "()\n")
+    controller_file.write(WHITE_SPACE + WHITE_SPACE + model_name + " = new_parser("+model_name+", request.data)\n")
+    controller_file.write(WHITE_SPACE +"if id:\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + "if request.method == 'GET':\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + model_name+" = "+model_name.title()+".query.get(id)\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "if "+model_name+":\n")
@@ -43,8 +47,7 @@ def generate_controller(model_name, model_components):
     controller_file.write(WHITE_SPACE + WHITE_SPACE + "elif request.method == 'PUT':\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + model_name + "_item = " + model_name.title() + ".query.get(id)\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "if "+model_name+"_item:\n")
-    for component in model_components:
-        controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "if " + component['field_name'].lower() + ":" + model_name + "_item." + component['field_name'].lower() + " = " + component['field_name'].lower() + "\n")
+    controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + model_name + "_item = edit_parser("+model_name+"_item, request.data)\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + model_name + "_item.last_updated_on = datetime.now()\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "db.session.add(" + model_name + "_item)\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "db.session.commit()\n")
@@ -67,12 +70,8 @@ def generate_controller(model_name, model_components):
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "entries = [" + model_name + ".dto() for " + model_name + " in " + model_name + "_list]\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "return json.dumps(dict("+model_name+"=entries))\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + "elif request.method == 'POST':\n")
-    controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "new_"+model_name+" = "+model_name.title()+"(\n")
-    for component in model_components:
-            controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + component['field_name'].lower() + ' = ' + component['field_name'].lower() + ',\n')
-    controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "created_on = datetime.now(),\n")
-    controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "last_updated_on = datetime.now()\n")
-    controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + ")\n\n")
+    controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + model_name+".created_on = datetime.now()\n")
+    controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + model_name+".last_updated_on = datetime.now()\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "db.session.add(new_" + model_name + ")\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "db.session.commit()\n")
     controller_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + "return json.dumps(dict("+model_name+"=new_"+model_name+".dto())), 201\n")

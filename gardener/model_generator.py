@@ -17,7 +17,8 @@ def add_model(model_name, model_components):
 
 
     # Write the class definition.
-    model_file.write('from app import db\n\n')
+    model_file.write('from app import db\n')
+    model_file.write('from helpers import json_date_format\n\n')
     model_file.write('class ' + model_name.title() + '(db.Model):\n')
     model_file.write(WHITE_SPACE+'id = db.Column(db.Integer, primary_key=True)\n')
 
@@ -91,8 +92,8 @@ def add_model(model_name, model_components):
 
     for component in model_components:
         model_file.write(WHITE_SPACE + WHITE_SPACE + WHITE_SPACE + component['field_name'].lower() + ' = self.' + component['field_name'].lower() + ',\n')
-    model_file.write(WHITE_SPACE+WHITE_SPACE+WHITE_SPACE+'created_on = self.created_on.isoformat(),\n')
-    model_file.write(WHITE_SPACE+WHITE_SPACE+WHITE_SPACE+'last_updated_on = self.last_updated_on.isoformat())\n')
+    model_file.write(WHITE_SPACE+WHITE_SPACE+WHITE_SPACE+'created_on = json_date_format(self.created_on),\n')
+    model_file.write(WHITE_SPACE+WHITE_SPACE+WHITE_SPACE+'last_updated_on = json_date_format(self.last_updated_on))\n')
     model_file.close()
 
     init_file = open(init_path, 'a')
