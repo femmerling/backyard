@@ -23,7 +23,7 @@ def edit_parser(passed_object, payload_data):
 	"""
 	payload = json.loads(payload_data)
 	for key, value in payload.items():
-		if key != "id" and key != "created_on" and value != None:
+		if key != "id" and value != None:
 			if hasattr(passed_object, key):
 				setattr(passed_object, key, value)
 	return passed_object
