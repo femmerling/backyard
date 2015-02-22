@@ -24,19 +24,13 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 SERVER_PORT = 8888
 
 # The database migration file storage folder
-SQLALCHEMY_MIGRATE_REPO = os.path.join(BASEDIR, 'warehouse')
+SQLALCHEMY_MIGRATE_REPO = os.path.join(BASEDIR, 'barn')
 
 # 
 #SQLALCHEMY_DATABASE_URI = 'mysql://root:password01@127.0.0.1/flasklearn' 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'greenhouse/app.db')
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'storage/app.db')
 #SQLALCHEMY_DATABASE_URI = 'postgresql://scott:tiger@localhost/mydatabase'
 #SQLALCHEMY_DATABASE_URI = 'oracle://scott:tiger@127.0.0.1:1521/sidname'
 
-VALID_DATA_TYPES = [
-    'bigint', 'biginteger', 'binary', 'blob', 'boolean', 'date', 'datetime',
-    'enum', 'float', 'int','integer', 'interval', 'pickletype', 'largebinary', 
-    'numeric', 'schematype',  'smallinteger', 'smallint', 'string', 'text',
-    'time', 'unicode', 'unicodetext'
-]
 
 WHITE_SPACE = "\t"
