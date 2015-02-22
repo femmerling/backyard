@@ -1,4 +1,4 @@
-#! backyard/bin/python
+#! env/bin/python
 
 """
 yard
@@ -20,14 +20,16 @@ The file depends on the gardener module.
 import sys
 import os.path
 
-from config import SQLALCHEMY_MIGRATE_REPO, VALID_DATA_TYPES
+from config import SQLALCHEMY_MIGRATE_REPO, BASEDIR
 
 from gardener import help, db_create, db_migrate
 from gardener import db_upgrade, db_downgrade, db_version
 from gardener import install_package
 from gardener import add_controller, add_model, generate_controller
-from gardener import run_tornado, run_gunicorn, run_testrun, stop_gunicorn
+from gardener import run_tornado, run_testrun
+from builder import Config
 
+config = Config(BASEDIR)
 if len(sys.argv) > 1:
 	sysinput = sys.argv[1].lower()
 
@@ -41,13 +43,6 @@ if len(sys.argv) > 1:
 			db_downgrade(sys.argv[2])
 		else:
 			db_downgrade()
-
-	#this handles the option to run gunicorn web server
-	elif sysinput == 'fly' or sysinput == 'f':
-		if len(sys.argv) > 2:
-			run_gunicorn(sys.argv[2:])
-		else:
-			run_gunicorn()
 
 	# this handles the generator for controller
 	# both with model or the stub only
@@ -70,7 +65,7 @@ if len(sys.argv) > 1:
 												'field_name': field_name,
 												'field_property': detail_components
 											}
-						elif detail_components[0].lower() in VALID_DATA_TYPES:
+						elif detail_components[0].lower() in Config.valid_data_types:
 							insert_components = {
 											'field_name': field_name,
 											'field_property': detail_components
@@ -123,9 +118,6 @@ if len(sys.argv) > 1:
 	elif sysinput == 'help' or sysinput == 'h':
 		help()
 
-	# this handles the option so stop gunicorn
-	elif sysinput == 'land' or sysinput == 'l':
-		stop_gunicorn()
 
 	# this handles the oprion to install package to the backyard
 	elif sysinput == 'place' or sysinput == 'p':
