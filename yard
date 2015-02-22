@@ -20,16 +20,18 @@ The file depends on the gardener module.
 import sys
 import os.path
 
-from config import SQLALCHEMY_MIGRATE_REPO, BASEDIR
-
 from gardener import help, db_create, db_migrate
 from gardener import db_upgrade, db_downgrade, db_version
 from gardener import install_package
 from gardener import add_controller, add_model, generate_controller
 from gardener import run_tornado, run_testrun
 from builder import Config
+from config import UserConfig
 
-config = Config(BASEDIR)
+user_config = UserConfig()
+config = Config(user_config.BASEDIR)
+
+
 if len(sys.argv) > 1:
 	sysinput = sys.argv[1].lower()
 
@@ -129,7 +131,7 @@ if len(sys.argv) > 1:
 
 	# this handles the option to perform database creation
 	elif sysinput == 'shove' or sysinput == 's':
-		if not os.path.exists(SQLALCHEMY_MIGRATE_REPO):
+		if not os.path.exists(user_config.SQLALCHEMY_MIGRATE_REPO):
 			db_create()
 		else:
 			print '\nPrevious database version found. Please use water or w option\n'

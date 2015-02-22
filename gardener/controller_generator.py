@@ -1,7 +1,11 @@
 import os.path
 
-from config import BASEDIR
-from config import WHITE_SPACE
+from config import UserConfig
+
+config = UserConfig()
+
+BASEDIR = config.BASEDIR
+WHITE_SPACE = config.WHITE_SPACE
 
 def generate_controller(model_name, model_components):
     model_name = model_name.lower()

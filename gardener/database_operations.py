@@ -5,8 +5,11 @@ from app import db
 
 from migrate.versioning import api
 
-from config import SQLALCHEMY_DATABASE_URI
-from config import SQLALCHEMY_MIGRATE_REPO
+from config import UserConfig
+
+config = UserConfig()
+SQLALCHEMY_DATABASE_URI = config.SQLALCHEMY_DATABASE_URI
+SQLALCHEMY_MIGRATE_REPO = config.SQLALCHEMY_MIGRATE_REPO
 
 def db_create():
     # This creates the new database.

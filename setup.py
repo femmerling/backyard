@@ -24,13 +24,14 @@ use MySQL as your database
 """
 from subprocess import call
 
-from config import BASEDIR, ADDITIONAL_GARDEN_TOOLS
+from config import UserConfig
 from builder import Config, FRAMEWORK_COMPONENTS, InstallerTools
 
 class Setup(object):
 
 	def __init__(self, base):
 		self.config = Config(base)
+		self.user_config = UserConfig()
 		self.base = base
 
 	def create_environment(self):
@@ -47,9 +48,9 @@ class Setup(object):
 		print '\nAll garden tools and creatures are complete\n'
 		print '\nYour initial backyard is ready\n'
 
-		if len(ADDITIONAL_GARDEN_TOOLS) > 0:
+		if len(self.user_config.ADDITIONAL_GARDEN_TOOLS) > 0:
 			print '\nWait, seems like you need some extra tools.\n'
-			for package in ADDITIONAL_GARDEN_TOOLS:
+			for package in self.user_config.ADDITIONAL_GARDEN_TOOLS:
 				print 'Placing ' + package.title() + " in the backyard\n"
 				call([self.config.pip,'install',package])
 				print "\n" + package.title() + " placed\n"
@@ -67,7 +68,8 @@ class Setup(object):
 
 
 if __name__ == '__main__':
- 	setup = Setup(BASEDIR)
+	config = UserConfig()
+ 	setup = Setup(config.BASEDIR)
  	setup.run()
 
 

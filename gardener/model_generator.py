@@ -1,9 +1,13 @@
 import os.path
 import sys
 
-from config import BASEDIR
-from config import WHITE_SPACE
-from config import SQLALCHEMY_MIGRATE_REPO
+from config import UserConfig
+
+config = UserConfig()
+
+BASEDIR = config.BASEDIR
+WHITE_SPACE = config.WHITE_SPACE
+SQLALCHEMY_MIGRATE_REPO = config.SQLALCHEMY_MIGRATE_REPO
 
 from controller_generator import generate_controller
 
