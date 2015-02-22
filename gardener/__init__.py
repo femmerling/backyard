@@ -11,7 +11,5 @@ from model_generator import add_model
 from package_operations import install_package
 
 from server_operations import run_tornado, run_testrun
-from server_operations import run_gunicorn, stop_gunicorn
-
 
 # end of file
