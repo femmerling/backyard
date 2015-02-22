@@ -1,4 +1,4 @@
-#! backyard/bin/python
+#! env/bin/python
 """
 try.py
 
