@@ -16,12 +16,12 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado import autoreload
 from app import app
-from config import SERVER_PORT
+from config import user_config
 
-print "\nbackyard is now running powered by Tornado Web Server on port " + str(SERVER_PORT) + " ...\n"
+print "\nbackyard is now running powered by Tornado Web Server on port " + str(user_config.SERVER_PORT) + " ...\n"
 
 http_server = HTTPServer(WSGIContainer(app))
-http_server.listen(SERVER_PORT)
+http_server.listen(user_config.SERVER_PORT)
 autoreload.start()
 IOLoop.instance().start()
 

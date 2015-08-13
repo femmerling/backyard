@@ -35,6 +35,6 @@ class UserConfig(object):
     #SQLALCHEMY_DATABASE_URI = 'postgresql://scott:tiger@localhost/mydatabase'
     #SQLALCHEMY_DATABASE_URI = 'oracle://scott:tiger@127.0.0.1:1521/sidname'
 
-    WHITE_SPACE = "\t"
+    WHITE_SPACE = "    "
 
 user_config = UserConfig()
