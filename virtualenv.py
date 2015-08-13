@@ -2,7 +2,7 @@
 """Create a "virtual" Python installation
 """
 
-__version__ = "12.1.dev0"
+__version__ = "13.2.0.dev0"
 virtualenv_version = __version__  # legacy
 
 import base64
@@ -526,8 +526,7 @@ def _find_file(filename, dirs):
 
 def file_search_dirs():
     here = os.path.dirname(os.path.abspath(__file__))
-    dirs = ['.', here,
-            join(here, 'virtualenv_support')]
+    dirs = [here, join(here, 'virtualenv_support')]
     if os.path.splitext(os.path.dirname(__file__))[0] != 'virtualenv':
         # Probably some boot script; just in case virtualenv is installed...
         try:
@@ -535,7 +534,8 @@ def file_search_dirs():
         except ImportError:
             pass
         else:
-            dirs.append(os.path.join(os.path.dirname(virtualenv.__file__), 'virtualenv_support'))
+            dirs.append(os.path.join(
+                os.path.dirname(virtualenv.__file__), 'virtualenv_support'))
     return [d for d in dirs if os.path.isdir(d)]
 
 
@@ -722,6 +722,12 @@ def main():
         action='store_true',
         help='Do not install pip in the new virtualenv.')
 
+    parser.add_option(
+        '--no-wheel',
+        dest='no_wheel',
+        action='store_true',
+        help='Do not install wheel in the new virtualenv.')
+
     default_search_dirs = file_search_dirs()
     parser.add_option(
         '--extra-search-dir',
@@ -822,6 +828,7 @@ def main():
                        never_download=True,
                        no_setuptools=options.no_setuptools,
                        no_pip=options.no_pip,
+                       no_wheel=options.no_wheel,
                        symlink=options.symlink)
     if 'after_install' in globals():
         after_install(options, home_dir)
@@ -955,6 +962,7 @@ def install_wheel(project_names, py_executable, search_dirs=None):
         call_subprocess(cmd, show_stdout=False,
             extra_env = {
                 'PYTHONPATH': pythonpath,
+                'JYTHONPATH': pythonpath,  # for Jython < 3.x
                 'PIP_FIND_LINKS': findlinks,
                 'PIP_USE_WHEEL': '1',
                 'PIP_PRE': '1',
@@ -968,7 +976,8 @@ def install_wheel(project_names, py_executable, search_dirs=None):
 def create_environment(home_dir, site_packages=False, clear=False,
                        unzip_setuptools=False,
                        prompt=None, search_dirs=None, never_download=False,
-                       no_setuptools=False, no_pip=False, symlink=True):
+                       no_setuptools=False, no_pip=False, no_wheel=False,
+                       symlink=True):
     """
     Creates a new environment in ``home_dir``.
 
@@ -990,6 +999,8 @@ def create_environment(home_dir, site_packages=False, clear=False,
         to_install = ['setuptools']
         if not no_pip:
             to_install.append('pip')
+        if not no_wheel:
+            to_install.append('wheel')
         install_wheel(to_install, py_executable, search_dirs)
 
     install_activate(home_dir, bin_dir, prompt)
@@ -2003,21 +2014,21 @@ AVijEPwfucjncQ==
 
 ##file activate.sh
 ACTIVATE_SH = convert("""
-eJytVVFvokAQfudXTLEPtTlLeo9tvMSmJpq02hSvl7u2wRUG2QR2DSxSe7n/frOACEVNLlceRHa+
-nfl25pvZDswCnoDPQ4QoTRQsENIEPci4CsBMZBq7CAsuLOYqvmYKTTj3YxnBgiXBudGBjUzBZUJI
-BXEqgCvweIyuCjeG4eF2F5x14bcB9KQiQQWrjSddI1/oQIx6SYYeoFjzWIoIhYI1izlbhJjkKO7D
-M/QEmKfO9O7WeRo/zr4P7pyHwWxkwitcgwpQ5Ej96OX+PmiFwLeVjFUOrNYKaq1Nud3nR2n8nI2m
-k9H0friPTGVsUdptaxGrTEfpNVFEskxpXtUkkCkl1UNF9cgLBkx48J4EXyALuBtAwNYIjF5kcmUU
-abMKmMq1ULoiRbgsDEkTSsKSGFCJ6Z8vY/2xYiSacmtyAfCDdCNTVZoVF8vSTQOoEwSnOrngBkws
-MYGMBMg8/bMBLSYKS7pYEXP0PqT+ZmBT0Xuy+Pplj5yn4aM9nk72JD8/Wi+Gr98sD9eWSMOwkapD
-BbUv91XSvmyVkICt2tmXR4tWmrcUCsjWOpw87YidEC8i0gdTSOFhouJUNxR+4NYBG0MftoCTD9F7
-2rTtxG3oPwY1b2HncYwhrlmj6Wq924xtGDWqfdNxap+OYxplEurnMVo9RWks+rH8qKEtx7kZT5zJ
-4H7oOFclrN6uFe+d+nW2aIUsSgs/42EIPuOhXq+jEo3S6tX6w2ilNkDnIpHCWdEQhFgwj9pkk7FN
-l/y5eQvRSIQ5+TrL05lewxWpt/Lbhes5cJF3mLET1MGhcKCF+40tNWnUulxrpojwDo2sObdje3Bz
-N3QeHqf3D7OjEXMVV8LN3ZlvuzoWHqiUcNKHtwNd0IbvPGKYYM31nPKCgkUILw3KL+Y8l7aO1ArS
-Ad37nIU0fCj5NE5gQCuC5sOSu+UdI2NeXg/lFkQIlFpdWVaWZRfvqGiirC9o6liJ9FXGYrSY9mI1
-D/Ncozgn13vJvsznr7DnkJWXsyMH7e42ljdJ+aqNDF1bFnKWFLdj31xtaJYK6EXFgqmV/ymD/ROG
-+n8O9H8f5vsGOWXsL1+1k3g=
+eJytVVFv2jAQfs+vuIY+lGo0Yo+tmEQ1JJBaqBrWaWurYJKDWAo2ShxSWvW/7+yEEAhl0tY8EOI7
+332++75zA8YhT2DGI4RFmiiYIqQJBpBxFYKdyDT2EaZcOMxXfMUU2nA+i+UCpiwJz60GrGUKPhNC
+KohTAVxBwGP0VbS2rAA3u+CsCW8W0JOKBBUs14H0LbPQgBj1kowCQLHisRQLFApWLOZsGmFivPgM
+HqElwD5980Y3372Hwf34R/fGu+uO+613G57hClSIwjjrRxs69mnN2S498GUpY2Ucy7UcXW2Tsc/4
+cSS/xv3RsD+67R3GU5prqEpLHVtpOopw14twFoU1vU1CmVJpA1TUFdM2YCKA1yT8AlnI/RBCtkJg
+9CKTLxcLbVYhU4YRRSjihc+iiJihJMwJATWa/s1krD+WjKhTbE0uAH4Se2SqCrPiYl6E2XHUBYJT
+XV/wQybmmEBGNGSB/lmDphSlJXYsCTkG+9W/7rqm9S1ZLPx2+95D794djIYHW2AO2Irh6zcnwJUj
+0ijaKdiHnXXbh1vqtmu9dNv1Jrrto90rzBsUucvG2hs+bLGdaGgGSwdsIUWAiYpTLTHcg9cAF6MZ
+bBxO9gC0tGmjzU32d4vknNt5HGOEK7Yjw4qad3NbVgVtx/a8yqfn2VZRh+qRrJrEqJK5PIuPirfj
+edeDoTfs3vY877Jwq6q3xL1Vgi4YrZBFaRFkPIpgxnik16teifbSTNZcxMVSrYHORYSFs1wc5DFl
+AUlmnbF1k+L5Rk40JGFCsc5MOdMruCQml3GbcDUBLozarAqtjsyIDxSty7I3H/aPamnm5EledZJq
+9b8P3O71Tc+7ux/d3o3/ktTQuWSwiWi/bLuZx6CGwkkHXj6QQ919GxGjBCuhJ1QdFGyB8LTT7id7
+YgiuM9WSNEBPA84iGkfUAhow0KUVQRNjzv3i7pExL66NYgsihEotLx0ny7KLV1Q0Y1YXNIecRM5U
+xmJ0mI7i7B7msQJxQqEPgn2aTJ7hwCHLKGdHDtrcbiyul+JVmR26vSziLMlvzY69XNN0FdBa5Au2
+5v+njPpPGPP/OeL/dbwfGu1Utz87Sp7q
 """)
 
 ##file activate.fish

@@ -16,14 +16,24 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado import autoreload
 from app import app
-from config import SERVER_PORT
+from config import user_config
 
-print "\nbackyard is now running powered by Tornado Web Server on port " + str(SERVER_PORT) + " ...\n"
+print "\nbackyard is now running powered by Tornado Web Server on\
+ port " + str(user_config.SERVER_PORT) + " ...\n"
 
-http_server = HTTPServer(WSGIContainer(app))
-http_server.listen(SERVER_PORT)
-autoreload.start()
-IOLoop.instance().start()
+
+try:
+    http_server = HTTPServer(WSGIContainer(app))
+    http_server.bind(user_config.SERVER_PORT)
+    http_server.start(0)
+    autoreload.start()
+    IOLoop.instance().start()
+
+except KeyboardInterrupt:
+    print "Shutting down subprocesses"
+# TODO: Handle graceful shutdown
+http_server.stop()
+IOLoop.instance().stop()
 
 
 # end of file

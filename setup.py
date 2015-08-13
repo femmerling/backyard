@@ -24,60 +24,59 @@ use MySQL as your database
 """
 from subprocess import call
 
-from config import UserConfig
+from config import user_config
 from builder import Config, FRAMEWORK_COMPONENTS, InstallerTools
+
 
 class Setup(object):
 
-	def __init__(self, base):
-		self.config = Config(base)
-		self.user_config = UserConfig()
-		self.base = base
+    def __init__(self, base):
+        self.config = Config(base)
+        self.user_config = user_config
+        self.base = base
 
-	def create_environment(self):
-		InstallerTools.create_virtual_environment(self.config)
-		InstallerTools.create_db_directory(self.base)
-		print '\nNew backyard created, now placing garden tools in the backyard\n'
+    def create_environment(self):
+        InstallerTools.create_virtual_environment(self.config)
+        InstallerTools.create_db_directory(self.base)
+        print '\nNew backyard created, now placing garden \
+               tools in the backyard\n'
 
-	def install_components(self):
-		for component in FRAMEWORK_COMPONENTS:
-			component.install()
+    def install_components(self):
+        print 'Checking if pip needs to be upgraded\n'
+        InstallerTools.upgrade_pip()
+        print 'pip check done!\n'
+        for component in FRAMEWORK_COMPONENTS:
+            component.install()
 
-		InstallerTools.fix_migrate(self.base)
+        InstallerTools.fix_migrate(self.base)
 
-		print '\nAll garden tools and creatures are complete\n'
-		print '\nYour initial backyard is ready\n'
+        print '\nAll garden tools and creatures are complete\n'
+        print '\nYour initial backyard is ready\n'
 
-		if len(self.user_config.ADDITIONAL_GARDEN_TOOLS) > 0:
-			print '\nWait, seems like you need some extra tools.\n'
-			for package in self.user_config.ADDITIONAL_GARDEN_TOOLS:
-				print 'Placing ' + package.title() + " in the backyard\n"
-				call([self.config.pip,'install',package])
-				print "\n" + package.title() + " placed\n"
+        if len(self.user_config.ADDITIONAL_GARDEN_TOOLS) > 0:
+            print '\nWait, seems like you need some extra tools.\n'
+            for package in self.user_config.ADDITIONAL_GARDEN_TOOLS:
+                print 'Placing ' + package.title() + " in the backyard\n"
+                call([self.config.pip, 'install', package])
+                print "\n" + package.title() + " placed\n"
 
-			print '\nAll extra tools placed.\n'
+            print '\nAll extra tools placed.\n'
 
-	def end_setup(self):
-		print '\nRun ./yard help for full details on what you can do with your backyard.\n'
-		print '\nEnjoy your time at the backyard and thank your for using!\n\n'
+    def end_setup(self):
+        print '\nRun ./yard help for full details on what \
+               you can do with your backyard.\n'
+        print '\nEnjoy your time at the backyard and thank your for using!\n\n'
 
-	def run(self):
-		self.create_environment()
-		self.install_components()
-		self.end_setup()
+    def run(self):
+        self.create_environment()
+        self.install_components()
+        self.end_setup()
 
 
 if __name__ == '__main__':
-	config = UserConfig()
- 	setup = Setup(config.BASEDIR)
- 	setup.run()
-
-
-
-
-
-
-
+    config = UserConfig()
+    setup = Setup(config.BASEDIR)
+    setup.run()
 
 
 # end of file
